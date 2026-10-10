@@ -91,6 +91,8 @@
   .queue button{padding:0;border:0;background:none;border-radius:4px;overflow:hidden;opacity:.55;transition:opacity .2s,transform .25s}
   .queue button:hover{opacity:1;transform:translateY(-6px)}
   .queue img{width:110px;height:196px;object-fit:cover}
+  iframe.work-media{border:0;background:#000}
+  .works-row.portrait iframe.work-media{width:315px}
   .peek{flex:0 0 56px;width:56px;height:380px;object-fit:cover;object-position:left;border-radius:4px 0 0 4px}
 
   /* tools */
@@ -353,10 +355,10 @@
 <script>
   /* ---------- Edit your content here ---------- */
   const works = [
-    { title: 'Moist Heist',  kind: 'Beauty Commercial', blurb: 'A stylized product film showcasing texture, movement and detail.', img: 'assets/work1.jpg', video: 'assets/video1.mp4', orientation: 'portrait' },
-    { title: '[Project 02]', kind: '[Category]',        blurb: '[One-line description of the project.]', img: 'assets/work2.jpg', video: 'assets/video2.mp4', orientation: 'portrait' },
-    { title: '[Project 03]', kind: '[Category]',        blurb: '[One-line description of the project.]', img: 'assets/work3.jpg', video: 'assets/video3.mp4', orientation: 'portrait' },
-    { title: '[Project 04]', kind: '[Category]',        blurb: '[One-line description of the project.]', img: 'assets/work4.jpg', video: 'assets/video4.mp4', orientation: 'portrait' }
+    { title: 'Moist Heist',  kind: 'Beauty Commercial', blurb: 'A stylized product film showcasing texture, movement and detail.', img: 'assets/work1.jpg', video: 'assets/video1.mp4', youtube: 'https://youtube.com/shorts/mb4VzPAN6uM', orientation: 'portrait' },
+    { title: 'Resilia Advert', kind: 'Advert',         blurb: '[One-line description of the project.]', img: 'assets/work2.jpg', video: 'assets/video2.mp4', youtube: 'https://youtube.com/shorts/mbRYCskX6_0', orientation: 'portrait' },
+    { title: 'Speaking Avatar', kind: 'AI Avatar',      blurb: '[One-line description of the project.]', img: 'assets/work3.jpg', video: 'assets/video3.mp4', youtube: 'https://youtube.com/shorts/sKVByPzavpY', orientation: 'portrait' },
+    { title: 'Smoothspine', kind: '[Category]',          blurb: '[One-line description of the project.]', img: 'assets/work4.jpg', video: 'assets/video4.mp4', youtube: 'https://youtube.com/shorts/DLM3Zltgi-M', orientation: 'portrait' }
   ];
   const quotes = [
     { text: 'Incredible creative partner. The AI videos brought our concept to life in a way that felt fresh, bold and completely unique.', name: 'Sarah L.', role: 'Brand Director' },
@@ -374,12 +376,21 @@
     { name: 'ChatGPT',            role: 'Ideation',      logo: 'assets/logos/chatgpt.png',    mark: 'G'  },
     { name: 'Photoshop',          role: 'Visual design', logo: 'assets/logos/photoshop.png',  mark: 'Ps' }
   ];
+  /* YouTube: paste a link into `youtube` for each project (watch, youtu.be or Shorts links all work).
+     When it is filled in, the YouTube player is used. When it is empty, the MP4 in `video` is used. */
   /* For each project, orientation is 'portrait' (9:16) or 'landscape' (16:9). */
   /* -------------------------------------------- */
 
   const $ = (id) => document.getElementById(id);
   const pad = (n) => (n < 10 ? '0' + n : '' + n);
   const wrap = (i, n, d) => (i + d + n) % n;
+  function ytId(v) {
+    if (!v) return '';
+    v = String(v).trim();
+    const m = v.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([\w-]{11})/);
+    if (m) return m[1];
+    return /^[\w-]{11}$/.test(v) ? v : '';
+  }
   function replay(el) { if (!el) return; el.classList.remove('swap'); void el.offsetWidth; el.classList.add('swap'); }
 
   // Works carousel + embedded video
@@ -389,7 +400,21 @@
     const w = works[work], next = works[wrap(work, works.length, 1)];
     const stage = $('work-stage');
     if (playing) {
-      stage.innerHTML = '<video class="work-media" id="work-video" controls autoplay playsinline preload="metadata" poster="' + w.img + '" src="' + w.video + '"></video>';
+      const id = ytId(w.youtube);
+      if (id) {
+        stage.innerHTML = '';
+        const f = document.createElement('iframe');
+        f.className = 'work-media';
+        f.id = 'work-video';
+        f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1';
+        f.title = w.title + ' video';
+        f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+        f.allowFullscreen = true;
+        f.referrerPolicy = 'strict-origin-when-cross-origin';
+        stage.appendChild(f);
+      } else {
+        stage.innerHTML = '<video class="work-media" id="work-video" controls autoplay playsinline preload="metadata" poster="' + w.img + '" src="' + w.video + '"></video>';
+      }
     } else {
       stage.innerHTML = '<img class="work-media" id="work-img" src="' + w.img + '" alt="">';
       $('work-img').alt = w.title + ' still';
