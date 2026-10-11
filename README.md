@@ -15,7 +15,6 @@ Static landing page (no build step). Just HTML, CSS and a little JavaScript.
 - **Project videos (MP4 files):** if `youtube` is empty, the site plays `assets/video1.mp4` … `video4.mp4` instead. GitHub blocks single files over 100 MB.
 - **Process thumbnails:** `assets/step1.jpg` … `step5.jpg`.
 - **Hero image:** overwrite `assets/hero.jpg` (a square or landscape image works best).
-- **Testimonial portrait:** add an image to `assets/` and follow the comment in the CSS (`.quote-media`).
 - **Tool logos:** already in `assets/logos/` (higgsfield, openart, google-flow, premiere-pro, capcut, chatgpt, photoshop). Replace a file with the same name to change one. The list is the `tools` array in `index.html`.
 - **Project names, descriptions and testimonials:** edit the `works` and `quotes` arrays at the bottom of `index.html`.
 - **Social links:** replace the `#` links in the footer.
